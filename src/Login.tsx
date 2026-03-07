@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { FormEvent } from "react";
 import {
   Card,
   CardContent,
@@ -6,25 +7,48 @@ import {
   CardHeader,
   CardTitle,
 } from "./components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "./components/ui/field";
+import { Field, FieldLabel } from "./components/ui/field";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
+import type { User } from "./utils/interfaces";
+import { login } from "./services/authService";
+import { AxiosError } from "axios";
 
-export default function Login() {
+export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.SubmitEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setLoading(true);
+
     if (!email.trim() || !password) {
-      setError("Preencha email e senha");
+      toast.error("Preencha email e senha");
+      setLoading(false);
       return;
     }
-    setError("");
-    console.log("login:", { email, password });
+
+    try {
+      const { user } = await login({ email, password });
+      toast.success(`Bem-vindo, ${user.name}!`);
+      onAuth?.(user);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        const msg =
+          err.response?.data?.message ??
+          err.response?.data?.error ??
+          "Email ou senha inválidos";
+        toast.error(msg);
+      } else {
+        toast.error("Erro ao conectar com o servidor");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,7 +59,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="backdrop-blur-sm bg-white/10 p-1 rounded-2xl">
           <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-white/20 overflow-hidden">
-            <CardHeader className="space-y-3 pb-8">
+            <CardHeader className="space-y-2 pb-2">
               <CardTitle className="text-3xl font-bold text-center text-gray-800">
                 Bem-vindo
               </CardTitle>
@@ -43,18 +67,16 @@ export default function Login() {
                 Entre com suas credenciais para acessar o sistema
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-8 pb-8">
+
+            <CardContent className="px-8">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <Field>
-                  <FieldLabel
-                    htmlFor="email"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Email
-                  </FieldLabel>
-                  <div className="flex items-center gap-3 border border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+
+                  <div className="relative flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white">
                     <Mail className="w-5 h-5 text-gray-400 shrink-0" />
                     <div className="h-6 w-px bg-gray-300"></div>
+
                     <Input
                       id="email"
                       type="email"
@@ -62,40 +84,51 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="border-0 shadow-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-gray-900 placeholder:text-gray-400"
+                      className="border-0 shadow-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:border-0"
                     />
                   </div>
                 </Field>
+
                 <Field>
-                  <FieldLabel
-                    htmlFor="password"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Senha
-                  </FieldLabel>
-                  <div className="flex items-center gap-3 border border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
+                  <FieldLabel htmlFor="password">Senha</FieldLabel>
+
+                  <div className="relative flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white">
                     <Lock className="w-5 h-5 text-gray-400 shrink-0" />
                     <div className="h-6 w-px bg-gray-300"></div>
+
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="border-0 shadow-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-gray-900"
+                      className="flex-1 border-0 shadow-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:border-0"
                     />
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-0 top-1/2 -translate-y-1/2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-900" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-900" />
+                      )}
+                    </Button>
                   </div>
                 </Field>
-                {error && (
-                  <p className="text-sm text-red-600 text-center">{error}</p>
-                )}
+
                 <div className="flex justify-center pt-2">
                   <Button
                     type="submit"
-                    className="px-12 h-11 text-base font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl border border-blue-800/20 transition-all duration-200"
+                    disabled={loading}
+                    className="px-12 h-11 text-base font-semibold bg-linear-to-r from-blue-600 to-blue-700 text-white"
                   >
-                    Entrar
+                    {loading ? "Entrando..." : "Entrar"}
                   </Button>
                 </div>
               </form>
