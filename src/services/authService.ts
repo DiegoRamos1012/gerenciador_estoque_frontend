@@ -7,14 +7,20 @@ interface LoginRequest {
 }
 
 interface LoginResponse {
-  token: string;
+  accessToken: string;
+  tokenType: string;
   user: User;
 }
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
-  const { data } = await api.post<LoginResponse>("/login", credentials);
+  const { data } = await api.post<LoginResponse>("/auth/login", credentials);
 
-  localStorage.setItem("token", data.token);
+  const token = data.accessToken;
+  if (!token || typeof token !== "string" || token.split(".").length !== 3) {
+    throw new Error("Token JWT inválido recebido do servidor");
+  }
+
+  localStorage.setItem("token", token);
   localStorage.setItem("user", JSON.stringify(data.user));
 
   return data;
@@ -31,7 +37,12 @@ export function getToken(): string | null {
 
 export function getStoredUser(): User | null {
   const raw = localStorage.getItem("user");
-  return raw ? JSON.parse(raw) : null;
+  if (!raw || raw === "undefined") return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 export function isAuthenticated(): boolean {

@@ -4,6 +4,7 @@ import "./index.css";
 import Login from "./Login.tsx";
 import Home from "./Home";
 import { Toaster } from "./components/ui/sonner";
+import ErrorBoundary from "./components/ErrorBoundary";
 import type { User } from "./utils/interfaces";
 import { logout, getStoredUser, isAuthenticated } from "./services/authService";
 
@@ -22,9 +23,17 @@ export function App() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(
+const container = document.getElementById("root")! as HTMLElement & {
+  __root?: ReturnType<typeof createRoot>;
+};
+const root = container.__root ?? createRoot(container);
+container.__root = root;
+
+root.render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
     <Toaster position="top-right" richColors closeButton />
   </StrictMode>,
 );

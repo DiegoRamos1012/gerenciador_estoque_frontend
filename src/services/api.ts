@@ -3,7 +3,7 @@ import axios from "axios";
 const API_PREFIX = "/api";
 
 const api = axios.create({
-  baseURL: `http://localhost:8080/${API_PREFIX}`,
+  baseURL: `http://localhost:8080${API_PREFIX}`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,7 +12,8 @@ const api = axios.create({
 // Interceptor: injeta o token JWT em todas as requisições autenticadas
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  // Só adiciona o header se o token existir e parecer um JWT válido (3 partes separadas por '.')
+  if (token && token.split(".").length === 3) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
