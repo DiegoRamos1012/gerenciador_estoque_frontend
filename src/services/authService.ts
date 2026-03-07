@@ -1,42 +1,34 @@
 import api from "./api";
-import type { User } from "../utils/interfaces";
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  accessToken: string;
-  tokenType: string;
-  user: User;
-}
+import type { User, LoginRequest, LoginResponse } from "../utils/interfaces";
+import {
+  saveToken,
+  saveUser,
+  getToken,
+  getStoredUserRaw,
+  clearAuth,
+  isValidJwt,
+} from "./tokenStorage";
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const { data } = await api.post<LoginResponse>("/auth/login", credentials);
 
   const token = data.accessToken;
-  if (!token || typeof token !== "string" || token.split(".").length !== 3) {
+  if (!isValidJwt(token)) {
     throw new Error("Token JWT inválido recebido do servidor");
   }
 
-  localStorage.setItem("token", token);
-  localStorage.setItem("user", JSON.stringify(data.user));
+  saveToken(token);
+  saveUser(data.user);
 
   return data;
 }
 
 export function logout(): void {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-}
-
-export function getToken(): string | null {
-  return localStorage.getItem("token");
+  clearAuth();
 }
 
 export function getStoredUser(): User | null {
-  const raw = localStorage.getItem("user");
+  const raw = getStoredUserRaw();
   if (!raw || raw === "undefined") return null;
   try {
     return JSON.parse(raw);
@@ -48,3 +40,5 @@ export function getStoredUser(): User | null {
 export function isAuthenticated(): boolean {
   return !!getToken();
 }
+
+export { getToken };

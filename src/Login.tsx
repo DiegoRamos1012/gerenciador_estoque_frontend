@@ -68,14 +68,14 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="px-8">
+            <CardContent className="px-8 pb-8">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
 
-                  <div className="relative flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white">
+                  <div className="flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 h-11 bg-white transition-colors focus-within:border-blue-500">
                     <Mail className="w-5 h-5 text-gray-400 shrink-0" />
-                    <div className="h-6 w-px bg-gray-300"></div>
+                    <div className="h-6 w-px bg-gray-300" />
 
                     <Input
                       id="email"
@@ -84,7 +84,7 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="border-0 shadow-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:border-0"
+                      className="flex-1 border-0 shadow-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:border-0"
                     />
                   </div>
                 </Field>
@@ -92,9 +92,9 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                 <Field>
                   <FieldLabel htmlFor="password">Senha</FieldLabel>
 
-                  <div className="relative flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 py-2.5 h-11 bg-white">
+                  <div className="flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 h-11 bg-white transition-colors focus-within:border-blue-500">
                     <Lock className="w-5 h-5 text-gray-400 shrink-0" />
-                    <div className="h-6 w-px bg-gray-300"></div>
+                    <div className="h-6 w-px bg-gray-300" />
 
                     <Input
                       id="password"
@@ -106,32 +106,47 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                       className="flex-1 border-0 shadow-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:border-0"
                     />
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
+                    <button
                       type="button"
                       onClick={() => setShowPassword((s) => !s)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2"
+                      className="shrink-0 p-1 -mr-1 cursor-pointer text-gray-500 hover:text-gray-800 transition-colors focus:outline-none"
+                      tabIndex={-1}
+                      aria-label={
+                        showPassword ? "Ocultar senha" : "Mostrar senha"
+                      }
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-900" />
+                        <EyeOff className="h-5 w-5" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-900" />
+                        <Eye className="h-5 w-5" />
                       )}
-                    </Button>
+                    </button>
                   </div>
                 </Field>
 
-                <div className="flex justify-center pt-2">
+                <div className="flex justify-center pt-1">
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="px-12 h-11 text-base font-semibold bg-linear-to-r from-blue-600 to-blue-700 text-white"
+                    className="w-full h-11 text-base font-semibold bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all"
                   >
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
                 </div>
               </form>
+              <div className=" border-t border-gray-200 pt-4 text-center text-sm text-gray-400 space-y-0.5">
+                <p>Gerenciador de Estoque &mdash; Diego Ramos dos Santos</p>
+                <p>
+                  <a
+                    href="https://github.com/DiegoRamos1012"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 hover:text-gray-600 transition-colors"
+                  >
+                    GitHub: DiegoRamos1012
+                  </a>
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -17,3 +17,14 @@ export interface Product {
   description: string;
   status: ProductStatus;
 }
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  tokenType: string;
+  user: User;
+}

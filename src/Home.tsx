@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 
@@ -18,6 +17,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
           <CardContent className="px-8 pb-8">
             <p className="text-center text-gray-700 mb-4">
               Usuário autenticado — esta é a tela de teste.
+              
             </p>
             <div className="flex justify-center">
               <Button onClick={() => onLogout?.()} className="px-6">
