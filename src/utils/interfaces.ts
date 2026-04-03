@@ -9,13 +9,14 @@ export interface User {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   productName: string;
   productCode: string;
   price: number;
   quantity: number;
   description: string;
   status: ProductStatus;
+  createdAt: string;
 }
 
 export interface LoginRequest {
