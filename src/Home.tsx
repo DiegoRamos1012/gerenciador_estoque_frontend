@@ -11,6 +11,7 @@ import type { Product } from "./utils/interfaces";
 import type { ProductStatus } from "./utils/types";
 import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
+import { Select, SelectTrigger, SelectValue } from "./components/ui/select";
 
 type CreatedAtFilter =
   | "ALL"
@@ -253,9 +254,12 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
                   className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm outline-none transition-colors focus:border-blue-500"
                 />
 
-                <Select></Select>
-
-
+                <Select>
+                  <SelectTrigger>
+                    {" "}
+                    <SelectValue placeholder="Todos os status"> </SelectValue>
+                  </SelectTrigger>
+                </Select>
 
                 {/*<SelectItem
                   value={statusFilter}
