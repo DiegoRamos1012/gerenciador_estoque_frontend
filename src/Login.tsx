@@ -51,6 +51,11 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
     }
   }
 
+  function setUserAdmin() {
+    setEmail("testeadmin@email.com");
+    setPassword("A1b2c3d4-");
+  }
+
   return (
     <div
       className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-cover bg-center bg-no-repeat"
@@ -124,7 +129,7 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                   </div>
                 </Field>
 
-                <div className="flex justify-center pt-1">
+                <div className="flex flex-col justify-center pt-1 gap-2">
                   <Button
                     type="submit"
                     disabled={loading}
@@ -132,9 +137,14 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                   >
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
+                  <Button
+                    type="button"
+                    className="w-full h-11 text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg transition-all"
+                    onClick={setUserAdmin}
+                  >Login Admin (Testes)</Button>
                 </div>
               </form>
-              <div className=" border-t border-gray-200 pt-4 text-center text-sm text-gray-400 space-y-0.5">
+              <div className=" border-t border-gray-200 pt-4 text-center text-sm text-gray-400 space-y-2">
                 <p>Gerenciador de Estoque &mdash; Diego Ramos dos Santos</p>
                 <p>
                   <a

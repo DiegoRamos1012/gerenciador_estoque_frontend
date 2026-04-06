@@ -12,6 +12,7 @@ import type { ProductStatus } from "./utils/types";
 import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
 import { Select, SelectTrigger, SelectValue } from "./components/ui/select";
+import { formatCurrency, formatDate } from "./utils/formatters";
 
 type CreatedAtFilter =
   | "ALL"
@@ -31,22 +32,6 @@ const statusClassName: Record<ProductStatus, string> = {
   INACTIVE: "bg-gray-100 text-gray-700 border-gray-200",
   OUT_OF_STOCK: "bg-amber-100 text-amber-700 border-amber-200",
 };
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-}
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) {
-    return "Data inválida";
-  }
-
-  return date.toLocaleString("pt-BR");
-}
 
 function isWithinCreatedAtFilter(dateString: string, filter: CreatedAtFilter) {
   if (filter === "ALL") return true;
