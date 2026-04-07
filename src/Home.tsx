@@ -13,6 +13,7 @@ import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
 import { Select, SelectTrigger, SelectValue } from "./components/ui/select";
 import { formatCurrency, formatDate } from "./utils/formatters";
+import { Plus } from "lucide-react";
 
 type CreatedAtFilter =
   | "ALL"
@@ -223,9 +224,14 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(true)}
                   >
+                    <Plus />
                     Adicionar produto
                   </Button>
-                  <Button variant="outline" onClick={() => onLogout?.()}>
+                  <Button
+                    variant="outline"
+                    className="bg-red-500 text-white"
+                    onClick={() => onLogout?.()}
+                  >
                     Sair
                   </Button>
                 </div>
