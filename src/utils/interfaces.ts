@@ -10,7 +10,7 @@ export interface User {
 
 export interface Product {
   id: string;
-  name: string;
+  productName: string;
   productCode: string;
   price: number;
   quantity: number;
