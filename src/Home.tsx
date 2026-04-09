@@ -11,7 +11,14 @@ import type { Product } from "./utils/interfaces";
 import type { ProductStatus } from "./utils/types";
 import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
-import { Select, SelectTrigger, SelectValue } from "./components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
 import { formatCurrency, formatDate } from "./utils/formatters";
 import { Plus } from "lucide-react";
 
@@ -240,44 +247,94 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <Input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Filtrar por nome, código ou descrição"
                   className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm outline-none transition-colors focus:border-blue-500"
                 />
 
-                <Select>
-                  <SelectTrigger>
-                    {" "}
-                    <SelectValue placeholder="Todos os status"> </SelectValue>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) =>
+                    setStatusFilter(value as ProductStatus | "ALL")
+                  }
+                >
+                  <SelectTrigger className="h-12 w-full rounded-md border border-gray-300 bg-white px-3 text-sm cursor-pointer">
+                    <SelectValue placeholder="Todos os status" />
                   </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup>
+                      <SelectItem
+                        value="ALL"
+                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                      >
+                        {" "}
+                        Todos os Status{" "}
+                      </SelectItem>
+                      <SelectItem
+                        value="ACTIVE"
+                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                      >
+                        Ativo
+                      </SelectItem>
+                      <SelectItem
+                        value="INACTIVE"
+                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                      >
+                        Inativo
+                      </SelectItem>
+                      <SelectItem
+                        value="OUT_OF_STOCK"
+                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                      >
+                        Fora de Estoque
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
                 </Select>
 
-                {/*<SelectItem
-                  value={statusFilter}
-                  onChange={(event: { target: { value: string; }; }) =>
-                    setStatusFilter(event.target.value as ProductStatus | "ALL")
-                  }
-                  className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm"
-                >
-                  <option value="ALL">Todos os status</option>
-                  <option value="ACTIVE">Ativo</option>
-                  <option value="INACTIVE">Inativo</option>
-                  <option value="OUT_OF_STOCK">Fora de Estoque</option>
-                </SelectItem> */}
-
-                <select
+                <Select
                   value={createdAtFilter}
-                  onChange={(event) =>
-                    setCreatedAtFilter(event.target.value as CreatedAtFilter)
+                  onValueChange={(e) =>
+                    setCreatedAtFilter(e as CreatedAtFilter)
                   }
-                  className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm"
                 >
-                  <option value="ALL">Todos os períodos</option>
-                  <option value="TODAY">Adicionados hoje</option>
-                  <option value="LAST_7_DAYS">Últimos 7 dias</option>
-                  <option value="LAST_30_DAYS">Últimos 30 dias</option>
-                  <option value="LAST_90_DAYS">Últimos 90 dias</option>
-                </select>
+                  <SelectTrigger className="h-12 w-full rounded-md border border-gray-300 bg-white px-3 text-sm">
+                    <SelectValue placeholder="Todos os períodos"></SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup></SelectGroup>
+                    <SelectItem
+                      value="ALL"
+                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                    >
+                      Todos os períodos
+                    </SelectItem>
+                    <SelectItem
+                      value="TODAY"
+                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                    >
+                      Adicionados Hoje
+                    </SelectItem>
+                    <SelectItem
+                      value="LAST_7_DAYS"
+                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                    >
+                      Adicionados a 7 dias
+                    </SelectItem>
+                    <SelectItem
+                      value="LAST_30_DAYS"
+                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                    >
+                      Adicionados a 30 dias
+                    </SelectItem>
+                    <SelectItem
+                      value="LAST_90_DAYS"
+                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
+                    >
+                      Adicionados a 90 dias
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardHeader>
 
