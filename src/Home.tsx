@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { ZodError } from "zod";
 
 import { DataTable } from "./components/data-table";
 import { Button } from "./components/ui/button";
@@ -78,28 +79,43 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   useEffect(() => {
+    let isActive = true;
+
     async function loadProducts() {
       setLoadingProducts(true);
 
       try {
         const data = await findAllProducts();
+        if (!isActive) return;
         setProducts(data);
       } catch (error) {
+        if (!isActive) return;
+
         if (error instanceof AxiosError) {
           const message =
             error.response?.data?.message ??
             error.response?.data?.error ??
             "Erro ao carregar produtos";
           toast.error(message);
+        } else if (error instanceof ZodError) {
+          console.error("Falha ao validar resposta de /products:", error);
+          toast.error("Resposta inválida da API ao carregar produtos");
         } else {
+          console.error("Falha inesperada ao carregar produtos:", error);
           toast.error("Erro inesperado ao carregar produtos");
         }
       } finally {
-        setLoadingProducts(false);
+        if (isActive) {
+          setLoadingProducts(false);
+        }
       }
     }
 
     void loadProducts();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const handleOpenDetails = useCallback(async (id: string) => {

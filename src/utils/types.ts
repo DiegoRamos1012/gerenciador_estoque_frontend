@@ -1,4 +1,6 @@
-export type userRole = "EMPLOYEE" | "MANAGER" | "ADMIN";
+export const USER_ROLE_VALUES = ["EMPLOYEE", "MANAGER", "ADMIN"] as const;
+
+export type userRole = (typeof USER_ROLE_VALUES)[number];
 
 export const PRODUCT_STATUS_VALUES = [
   "ACTIVE",

@@ -17,6 +17,7 @@ import { login } from "./services/authService";
 import { AxiosError } from "axios";
 
 export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
+  const isDevMode = import.meta.env.DEV;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -137,11 +138,15 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                   >
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
-                  <Button
-                    type="button"
-                    className="w-full h-11 text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg transition-all"
-                    onClick={setUserAdmin}
-                  >Login Admin (Testes)</Button>
+                  {isDevMode ? (
+                    <Button
+                      type="button"
+                      className="w-full h-11 text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg transition-all"
+                      onClick={setUserAdmin}
+                    >
+                      Login Admin (Testes)
+                    </Button>
+                  ) : null}
                 </div>
               </form>
               <div className=" border-t border-gray-200 pt-4 text-center text-sm text-gray-400 space-y-2">
