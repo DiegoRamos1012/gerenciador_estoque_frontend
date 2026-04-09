@@ -133,7 +133,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
       .filter((product) => {
         const matchesSearch =
           !normalizedSearch ||
-          product.productName.toLowerCase().includes(normalizedSearch) ||
+          product.name.toLowerCase().includes(normalizedSearch) ||
           product.productCode.toLowerCase().includes(normalizedSearch) ||
           product.description.toLowerCase().includes(normalizedSearch);
 
@@ -156,7 +156,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
       {
-        accessorKey: "productName",
+        accessorKey: "name",
         header: "Nome",
       },
       {
@@ -428,7 +428,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
               <div className="space-y-3 text-sm text-gray-700">
                 <p>
                   <span className="font-medium text-gray-900">Nome:</span>{" "}
-                  {selectedProduct.productName}
+                  {selectedProduct.name}
                 </p>
                 <p>
                   <span className="font-medium text-gray-900">Código:</span>{" "}
