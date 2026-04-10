@@ -30,7 +30,10 @@ export function getAxiosFieldErrors(error: AxiosError): Record<string, string> {
       if (!item || typeof item !== "object") return acc;
 
       const typedItem = item as { field?: unknown; message?: unknown };
-      if (typeof typedItem.field === "string" && typeof typedItem.message === "string") {
+      if (
+        typeof typedItem.field === "string" &&
+        typeof typedItem.message === "string"
+      ) {
         acc[typedItem.field] = typedItem.message;
       }
 
@@ -41,18 +44,17 @@ export function getAxiosFieldErrors(error: AxiosError): Record<string, string> {
   }
 
   if (typeof source === "object") {
-    return Object.entries(source as Record<string, unknown>).reduce<Record<string, string>>(
-      (acc, [key, value]) => {
-        if (typeof value === "string") {
-          acc[key] = value;
-        } else if (Array.isArray(value) && typeof value[0] === "string") {
-          acc[key] = value[0];
-        }
+    return Object.entries(source as Record<string, unknown>).reduce<
+      Record<string, string>
+    >((acc, [key, value]) => {
+      if (typeof value === "string") {
+        acc[key] = value;
+      } else if (Array.isArray(value) && typeof value[0] === "string") {
+        acc[key] = value[0];
+      }
 
-        return acc;
-      },
-      {},
-    );
+      return acc;
+    }, {});
   }
 
   return {};

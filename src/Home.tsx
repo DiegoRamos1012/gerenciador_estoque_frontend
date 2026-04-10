@@ -428,162 +428,189 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
             isAddDialogOpen ? "scale-100" : "scale-95"
           }`}
         >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Adicionar produto
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={closeAddDialog}
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Adicionar produto
+            </h3>
+            <Button variant="ghost" size="sm" onClick={closeAddDialog}>
+              Fechar
+            </Button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="product-name"
               >
-                Fechar
-              </Button>
+                Nome
+              </label>
+              <Input
+                id="product-name"
+                value={addProductForm.name}
+                onChange={(event) =>
+                  handleAddProductFieldChange("name", event.target.value)
+                }
+                placeholder="Ex: Teclado Mecânico"
+                className="app-input-shell"
+              />
+              {addProductErrors.name ? (
+                <p className="text-xs text-red-600">{addProductErrors.name}</p>
+              ) : null}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="product-code"
+              >
+                Código do produto
+              </label>
+              <Input
+                id="product-code"
+                value={addProductForm.productCode}
+                onChange={(event) =>
+                  handleAddProductFieldChange("productCode", event.target.value)
+                }
+                placeholder="Ex: TEC-MEC-001"
+                className="app-input-shell"
+              />
+              {addProductErrors.productCode ? (
+                <p className="text-xs text-red-600">
+                  {addProductErrors.productCode}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700" htmlFor="product-name">
-                  Nome
-                </label>
-                <Input
-                  id="product-name"
-                  value={addProductForm.name}
-                  onChange={(event) =>
-                    handleAddProductFieldChange("name", event.target.value)
-                  }
-                  placeholder="Ex: Teclado Mecânico"
-                  className="app-input-shell"
-                />
-                {addProductErrors.name ? (
-                  <p className="text-xs text-red-600">{addProductErrors.name}</p>
-                ) : null}
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700" htmlFor="product-code">
-                  Código do produto
-                </label>
-                <Input
-                  id="product-code"
-                  value={addProductForm.productCode}
-                  onChange={(event) =>
-                    handleAddProductFieldChange("productCode", event.target.value)
-                  }
-                  placeholder="Ex: TEC-MEC-001"
-                  className="app-input-shell"
-                />
-                {addProductErrors.productCode ? (
-                  <p className="text-xs text-red-600">{addProductErrors.productCode}</p>
-                ) : null}
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-700" htmlFor="product-price">
-                    Preço
-                  </label>
-                  <Input
-                    id="product-price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={addProductForm.price}
-                    onChange={(event) =>
-                      handleAddProductFieldChange("price", event.target.value)
-                    }
-                    placeholder="0.00"
-                    className="app-input-shell"
-                  />
-                  {addProductErrors.price ? (
-                    <p className="text-xs text-red-600">{addProductErrors.price}</p>
-                  ) : null}
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-700" htmlFor="product-quantity">
-                    Quantidade
-                  </label>
-                  <Input
-                    id="product-quantity"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={addProductForm.quantity}
-                    onChange={(event) =>
-                      handleAddProductFieldChange("quantity", event.target.value)
-                    }
-                    placeholder="0"
-                    className="app-input-shell"
-                  />
-                  {addProductErrors.quantity ? (
-                    <p className="text-xs text-red-600">{addProductErrors.quantity}</p>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Status</label>
-                <Select
-                  value={addProductForm.status}
-                  onValueChange={(value) =>
-                    handleAddProductFieldChange("status", value)
-                  }
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="product-price"
                 >
-                  <SelectTrigger className="app-input-shell h-10 cursor-pointer">
-                    <SelectValue placeholder="Selecione o status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectGroup>
-                      {productStatusOptions.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          className={selectItemClassName}
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                {addProductErrors.status ? (
-                  <p className="text-xs text-red-600">{addProductErrors.status}</p>
+                  Preço
+                </label>
+                <Input
+                  id="product-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={addProductForm.price}
+                  onChange={(event) =>
+                    handleAddProductFieldChange("price", event.target.value)
+                  }
+                  placeholder="0.00"
+                  className="app-input-shell"
+                />
+                {addProductErrors.price ? (
+                  <p className="text-xs text-red-600">
+                    {addProductErrors.price}
+                  </p>
                 ) : null}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700" htmlFor="product-description">
-                  Descrição
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="product-quantity"
+                >
+                  Quantidade
                 </label>
-                <textarea
-                  id="product-description"
-                  value={addProductForm.description}
+                <Input
+                  id="product-quantity"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={addProductForm.quantity}
                   onChange={(event) =>
-                    handleAddProductFieldChange("description", event.target.value)
+                    handleAddProductFieldChange("quantity", event.target.value)
                   }
-                  placeholder="Descreva o produto"
-                  rows={4}
-                  className="app-input-shell w-full resize-none rounded-md border px-3 py-2 text-sm outline-none"
+                  placeholder="0"
+                  className="app-input-shell"
                 />
-                {addProductErrors.description ? (
-                  <p className="text-xs text-red-600">{addProductErrors.description}</p>
+                {addProductErrors.quantity ? (
+                  <p className="text-xs text-red-600">
+                    {addProductErrors.quantity}
+                  </p>
                 ) : null}
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={closeAddDialog} disabled={isCreatingProduct}>
-                Cancelar
-              </Button>
-              <Button
-                className="app-primary-btn border-transparent"
-                onClick={() => void handleCreateProduct()}
-                disabled={isCreatingProduct}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Status
+              </label>
+              <Select
+                value={addProductForm.status}
+                onValueChange={(value) =>
+                  handleAddProductFieldChange("status", value)
+                }
               >
-                {isCreatingProduct ? "Salvando..." : "Salvar produto"}
-              </Button>
+                <SelectTrigger className="app-input-shell h-10 cursor-pointer">
+                  <SelectValue placeholder="Selecione o status" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectGroup>
+                    {productStatusOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className={selectItemClassName}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {addProductErrors.status ? (
+                <p className="text-xs text-red-600">
+                  {addProductErrors.status}
+                </p>
+              ) : null}
             </div>
+
+            <div className="space-y-1.5">
+              <label
+                className="text-sm font-medium text-gray-700"
+                htmlFor="product-description"
+              >
+                Descrição
+              </label>
+              <textarea
+                id="product-description"
+                value={addProductForm.description}
+                onChange={(event) =>
+                  handleAddProductFieldChange("description", event.target.value)
+                }
+                placeholder="Descreva o produto"
+                rows={4}
+                className="app-input-shell w-full resize-none rounded-md border px-3 py-2 text-sm outline-none"
+              />
+              {addProductErrors.description ? (
+                <p className="text-xs text-red-600">
+                  {addProductErrors.description}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={closeAddDialog}
+              disabled={isCreatingProduct}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="app-primary-btn border-transparent"
+              onClick={() => void handleCreateProduct()}
+              disabled={isCreatingProduct}
+            >
+              {isCreatingProduct ? "Salvando..." : "Salvar produto"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -598,73 +625,73 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
             isDetailsDialogOpen ? "scale-100" : "scale-95"
           }`}
         >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Detalhes do produto
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setIsDetailsDialogOpen(false);
-                  setSelectedProduct(null);
-                }}
-              >
-                Fechar
-              </Button>
-            </div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Detalhes do produto
+            </h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsDetailsDialogOpen(false);
+                setSelectedProduct(null);
+              }}
+            >
+              Fechar
+            </Button>
+          </div>
 
-            {loadingDetails || !selectedProduct ? (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-5 w-full max-w-sm" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-5 w-3/4" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-5 w-32" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-24 w-full" />
-                </div>
+          {loadingDetails || !selectedProduct ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-full max-w-sm" />
               </div>
-            ) : (
-              <div className="space-y-3 text-sm text-gray-700">
-                <p>
-                  <span className="font-medium text-gray-900">Nome:</span>{" "}
-                  {selectedProduct.productName}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Código:</span>{" "}
-                  {selectedProduct.productCode}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Preço:</span>{" "}
-                  {formatCurrency(selectedProduct.price)}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Quantidade:</span>{" "}
-                  {selectedProduct.quantity}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Status:</span>{" "}
-                  {statusLabel[selectedProduct.status]}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Criado em:</span>{" "}
-                  {formatDate(selectedProduct.createdAt)}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-900">Descrição:</span>{" "}
-                  {selectedProduct.description}
-                </p>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-5 w-3/4" />
               </div>
-            )}
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-24 w-full" />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3 text-sm text-gray-700">
+              <p>
+                <span className="font-medium text-gray-900">Nome:</span>{" "}
+                {selectedProduct.productName}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Código:</span>{" "}
+                {selectedProduct.productCode}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Preço:</span>{" "}
+                {formatCurrency(selectedProduct.price)}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Quantidade:</span>{" "}
+                {selectedProduct.quantity}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Status:</span>{" "}
+                {statusLabel[selectedProduct.status]}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Criado em:</span>{" "}
+                {formatDate(selectedProduct.createdAt)}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Descrição:</span>{" "}
+                {selectedProduct.description}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -16,7 +16,9 @@ export async function findProductById(id: string): Promise<Product> {
   return productSchema.parse(data);
 }
 
-export async function createProduct(payload: ProductCreateRequest): Promise<void> {
+export async function createProduct(
+  payload: ProductCreateRequest,
+): Promise<void> {
   const validatedPayload = createProductRequestSchema.parse(payload);
   await api.post("/products", validatedPayload);
 }
