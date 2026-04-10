@@ -55,6 +55,7 @@ export function DataTable<TData, TValue>({
   onPageSizeChange,
   emptyMessage = "Nenhum registro encontrado.",
 }: DataTableProps<TData, TValue>) {
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

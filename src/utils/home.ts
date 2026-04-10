@@ -14,6 +14,15 @@ export const statusFilterOptions: Array<{
   { value: "OUT_OF_STOCK", label: "Fora de Estoque" },
 ];
 
+export const productStatusOptions: Array<{
+  value: ProductStatus;
+  label: string;
+}> = [
+  { value: "ACTIVE", label: "Ativo" },
+  { value: "INACTIVE", label: "Inativo" },
+  { value: "OUT_OF_STOCK", label: "Fora de Estoque" },
+];
+
 export const createdAtFilterOptions: Array<{
   value: CreatedAtFilter;
   label: string;

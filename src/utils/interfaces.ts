@@ -19,6 +19,15 @@ export interface Product {
   createdAt: string;
 }
 
+export interface ProductCreateRequest {
+  name: string;
+  productCode: string;
+  price: number;
+  quantity: number;
+  description: string;
+  status: ProductStatus;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
