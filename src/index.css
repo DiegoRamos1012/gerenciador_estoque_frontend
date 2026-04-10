@@ -1,13 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light;
-  color: #213547;
-  background-color: #ffffff;
+  color: #0f172a;
+  background-color: #f4f7fb;
+
+  --app-bg: #f4f7fb;
+  --app-surface: #ffffff;
+  --app-surface-soft: #eef3f9;
+  --app-border: #d8e1ec;
+  --app-text: #0f172a;
+  --app-text-muted: #475569;
+  --app-primary: #2563eb;
+  --app-primary-hover: #1d4ed8;
+  --app-focus: #60a5fa;
+  --app-danger: #dc2626;
+  --app-danger-hover: #b91c1c;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,16 +28,80 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  background:
+    radial-gradient(circle at 15% 20%, #e7eef8 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, #dfe9f8 0%, transparent 42%),
+    var(--app-bg);
+  color: var(--app-text);
+}
+
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #0284c7;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #0369a1;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+.font-data {
+  font-family: "IBM Plex Mono", "Consolas", monospace;
+}
+
+.app-card {
+  border: 1px solid var(--app-border);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+}
+
+.app-title {
+  color: var(--app-text);
+}
+
+.app-muted {
+  color: var(--app-text-muted);
+}
+
+.app-input-shell {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+}
+
+.app-input-shell:focus-within {
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--app-focus) 30%, transparent);
+}
+
+.app-primary-btn {
+  background: linear-gradient(
+    135deg,
+    var(--app-primary),
+    var(--app-primary-hover)
+  );
+  color: #ffffff;
+}
+
+.app-primary-btn:hover {
+  background: linear-gradient(135deg, var(--app-primary-hover), #1e40af);
+}
+
+.app-danger-btn {
+  background-color: var(--app-danger);
+  color: #ffffff;
+}
+
+.app-danger-btn:hover {
+  background-color: var(--app-danger-hover);
+}
+
+.app-page-overlay {
+  background-image:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.64), rgba(37, 99, 235, 0.36)),
+    url("/img/background-stock-employee.webp");
 }

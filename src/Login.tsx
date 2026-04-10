@@ -58,18 +58,15 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
   }
 
   return (
-    <div
-      className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/img/background-stock-employee.webp')" }}
-    >
+    <div className="app-page-overlay flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-cover bg-center bg-no-repeat">
       <div className="w-full max-w-md">
         <div className="backdrop-blur-sm bg-white/10 p-1 rounded-2xl">
-          <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-white/20 overflow-hidden">
+          <Card className="app-card backdrop-blur-md shadow-2xl overflow-hidden">
             <CardHeader className="space-y-2 pb-2">
-              <CardTitle className="text-3xl font-bold text-center text-gray-800">
+              <CardTitle className="app-title text-3xl font-bold text-center">
                 Bem-vindo
               </CardTitle>
-              <CardDescription className="text-center text-base text-gray-600">
+              <CardDescription className="app-muted text-center text-base">
                 Entre com suas credenciais para acessar o sistema
               </CardDescription>
             </CardHeader>
@@ -79,7 +76,7 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
 
-                  <div className="flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 h-11 bg-white transition-colors focus-within:border-blue-500">
+                  <div className="app-input-shell flex items-center gap-3 border-2 rounded-lg px-4 h-11 transition-colors">
                     <Mail className="w-5 h-5 text-gray-400 shrink-0" />
                     <div className="h-6 w-px bg-gray-300" />
 
@@ -98,7 +95,7 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                 <Field>
                   <FieldLabel htmlFor="password">Senha</FieldLabel>
 
-                  <div className="flex items-center gap-3 border-2 border-gray-300 rounded-lg px-4 h-11 bg-white transition-colors focus-within:border-blue-500">
+                  <div className="app-input-shell flex items-center gap-3 border-2 rounded-lg px-4 h-11 transition-colors">
                     <Lock className="w-5 h-5 text-gray-400 shrink-0" />
                     <div className="h-6 w-px bg-gray-300" />
 
@@ -134,14 +131,14 @@ export default function Login({ onAuth }: { onAuth?: (user: User) => void }) {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-11 text-base font-semibold bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all"
+                    className="app-primary-btn w-full h-11 text-base font-semibold rounded-lg transition-all"
                   >
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
                   {isDevMode ? (
                     <Button
                       type="button"
-                      className="w-full h-11 text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg transition-all"
+                      className="app-input-shell w-full h-11 text-base font-semibold app-muted rounded-lg transition-all"
                       onClick={setUserAdmin}
                     >
                       Login Admin (Testes)

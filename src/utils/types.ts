@@ -9,3 +9,10 @@ export const PRODUCT_STATUS_VALUES = [
 ] as const;
 
 export type ProductStatus = (typeof PRODUCT_STATUS_VALUES)[number];
+
+export type CreatedAtFilter =
+  | "ALL"
+  | "TODAY"
+  | "LAST_7_DAYS"
+  | "LAST_30_DAYS"
+  | "LAST_90_DAYS";

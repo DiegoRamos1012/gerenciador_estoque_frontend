@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import type { ChangeEvent } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -9,7 +16,7 @@ import { Button } from "./components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { findAllProducts, findProductById } from "./services/productService";
 import type { Product } from "./utils/interfaces";
-import type { ProductStatus } from "./utils/types";
+import type { CreatedAtFilter, ProductStatus } from "./utils/types";
 import { Skeleton } from "./components/ui/skeleton";
 import { Input } from "./components/ui/input";
 import {
@@ -21,51 +28,26 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { formatCurrency, formatDate } from "./utils/formatters";
+import { getAxiosErrorMessage } from "./utils/http";
+import {
+  createdAtFilterOptions,
+  getFilteredProducts,
+  selectItemClassName,
+  statusClassName,
+  statusFilterOptions,
+  statusLabel,
+} from "./utils/home";
 import { Plus } from "lucide-react";
 
-type CreatedAtFilter =
-  | "ALL"
-  | "TODAY"
-  | "LAST_7_DAYS"
-  | "LAST_30_DAYS"
-  | "LAST_90_DAYS";
-
-const statusLabel: Record<ProductStatus, string> = {
-  ACTIVE: "Ativo",
-  INACTIVE: "Inativo",
-  OUT_OF_STOCK: "Fora de Estoque",
-};
-
-const statusClassName: Record<ProductStatus, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  INACTIVE: "bg-gray-100 text-gray-700 border-gray-200",
-  OUT_OF_STOCK: "bg-amber-100 text-amber-700 border-amber-200",
-};
-
-function isWithinCreatedAtFilter(dateString: string, filter: CreatedAtFilter) {
-  if (filter === "ALL") return true;
-
-  const createdAt = new Date(dateString);
-  if (Number.isNaN(createdAt.getTime())) return false;
-
-  const now = new Date();
-
-  if (filter === "TODAY") {
-    return createdAt.toDateString() === now.toDateString();
-  }
-
-  const diffMs = now.getTime() - createdAt.getTime();
-  const diffDays = diffMs / (1000 * 60 * 60 * 24);
-
-  if (filter === "LAST_7_DAYS") return diffDays <= 7;
-  if (filter === "LAST_30_DAYS") return diffDays <= 30;
-  return diffDays <= 90;
+function centeredHeader(label: string) {
+  return <div className="text-center">{label}</div>;
 }
 
 export default function Home({ onLogout }: { onLogout?: () => void }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "ALL">(
     "ALL",
   );
@@ -77,6 +59,21 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const handleSearchChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setSearch(event.target.value);
+    },
+    [],
+  );
+
+  const handleStatusFilterChange = useCallback((value: string) => {
+    setStatusFilter(value as ProductStatus | "ALL");
+  }, []);
+
+  const handleCreatedAtFilterChange = useCallback((value: string) => {
+    setCreatedAtFilter(value as CreatedAtFilter);
+  }, []);
 
   useEffect(() => {
     let isActive = true;
@@ -92,11 +89,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
         if (!isActive) return;
 
         if (error instanceof AxiosError) {
-          const message =
-            error.response?.data?.message ??
-            error.response?.data?.error ??
-            "Erro ao carregar produtos";
-          toast.error(message);
+          toast.error(getAxiosErrorMessage(error, "Erro ao carregar produtos"));
         } else if (error instanceof ZodError) {
           console.error("Falha ao validar resposta de /products:", error);
           toast.error("Resposta inválida da API ao carregar produtos");
@@ -129,11 +122,9 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
       setIsDetailsDialogOpen(false);
 
       if (error instanceof AxiosError) {
-        const message =
-          error.response?.data?.message ??
-          error.response?.data?.error ??
-          "Erro ao buscar detalhes do produto";
-        toast.error(message);
+        toast.error(
+          getAxiosErrorMessage(error, "Erro ao buscar detalhes do produto"),
+        );
       } else {
         toast.error("Erro inesperado ao buscar detalhes");
       }
@@ -143,54 +134,50 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-
-    return [...products]
-      .filter((product) => {
-        const matchesSearch =
-          !normalizedSearch ||
-          product.productName.toLowerCase().includes(normalizedSearch) ||
-          product.productCode.toLowerCase().includes(normalizedSearch) ||
-          product.description.toLowerCase().includes(normalizedSearch);
-
-        const matchesStatus =
-          statusFilter === "ALL" || product.status === statusFilter;
-        const matchesCreatedAt = isWithinCreatedAtFilter(
-          product.createdAt,
-          createdAtFilter,
-        );
-
-        return matchesSearch && matchesStatus && matchesCreatedAt;
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
-        return dateB - dateA;
-      });
-  }, [products, search, statusFilter, createdAtFilter]);
+    return getFilteredProducts({
+      products,
+      search: deferredSearch,
+      statusFilter,
+      createdAtFilter,
+    });
+  }, [products, deferredSearch, statusFilter, createdAtFilter]);
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
       {
         accessorKey: "productName",
-        header: "Nome",
+        header: () => centeredHeader("Nome"),
       },
       {
         accessorKey: "productCode",
-        header: "Código de produto",
+        header: () => centeredHeader("Código de produto"),
+        cell: ({ row }) => (
+          <span className="block text-center font-data">
+            {row.original.productCode}
+          </span>
+        ),
       },
       {
         accessorKey: "price",
-        header: "Preço",
-        cell: ({ row }) => formatCurrency(row.original.price),
+        header: () => centeredHeader("Preço"),
+        cell: ({ row }) => (
+          <span className="block text-center font-data">
+            {formatCurrency(row.original.price)}
+          </span>
+        ),
       },
       {
         accessorKey: "quantity",
-        header: "Quantidade",
+        header: () => centeredHeader("Quantidade"),
+        cell: ({ row }) => (
+          <span className="block text-center font-data">
+            {row.original.quantity}
+          </span>
+        ),
       },
       {
         accessorKey: "description",
-        header: "Descrição",
+        header: () => centeredHeader("Descrição"),
         cell: ({ row }) => (
           <span className="inline-block max-w-65 truncate">
             {row.original.description}
@@ -199,18 +186,20 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
       },
       {
         accessorKey: "status",
-        header: "Status",
+        header: () => centeredHeader("Status"),
         cell: ({ row }) => (
-          <span
-            className={`inline-flex rounded-full border px-2 py-1 text-xs font-medium ${statusClassName[row.original.status]}`}
-          >
-            {statusLabel[row.original.status]}
-          </span>
+          <div className="flex justify-center">
+            <span
+              className={`inline-flex rounded-full border px-2 py-1 text-xs font-medium ${statusClassName[row.original.status]}`}
+            >
+              {statusLabel[row.original.status]}
+            </span>
+          </div>
         ),
       },
       {
         id: "actions",
-        header: "Ações",
+        header: () => centeredHeader("Ações"),
         cell: ({ row }) => (
           <Button
             variant="outline"
@@ -227,23 +216,18 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
 
   return (
     <>
-      <div
-        className="flex min-h-svh w-full items-center justify-center bg-cover bg-center bg-no-repeat p-6 md:p-10"
-        style={{
-          backgroundImage: "url('/img/background-stock-employee.webp')",
-        }}
-      >
+      <div className="app-page-overlay flex min-h-svh w-full items-center justify-center bg-cover bg-center bg-no-repeat p-6 md:p-10">
         <div className="w-full max-w-6xl">
-          <Card className="border-white/20 bg-white/95 shadow-2xl backdrop-blur-md">
+          <Card className="app-card shadow-2xl backdrop-blur-md">
             <CardHeader className="space-y-4 pb-2">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <CardTitle className="text-2xl font-bold text-gray-800">
+                <CardTitle className="app-title text-2xl font-bold">
                   Seu estoque
                 </CardTitle>
 
                 <div className="flex flex-wrap items-center gap-7">
                   <Button
-                    className="cursor-pointer hover:"
+                    className="app-primary-btn cursor-pointer border-transparent"
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(true)}
                   >
@@ -252,7 +236,7 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
                   </Button>
                   <Button
                     variant="outline"
-                    className="bg-red-500 text-white"
+                    className="app-danger-btn border-transparent"
                     onClick={() => onLogout?.()}
                   >
                     Sair
@@ -263,92 +247,50 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <Input
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={handleSearchChange}
                   placeholder="Filtrar por nome, código ou descrição"
-                  className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm outline-none transition-colors focus:border-blue-500"
+                  className="app-input-shell h-10 rounded-md border px-3 text-sm outline-none transition-colors"
                 />
 
                 <Select
                   value={statusFilter}
-                  onValueChange={(value) =>
-                    setStatusFilter(value as ProductStatus | "ALL")
-                  }
+                  onValueChange={handleStatusFilterChange}
                 >
-                  <SelectTrigger className="h-12 w-full rounded-md border border-gray-300 bg-white px-3 text-sm cursor-pointer">
+                  <SelectTrigger className="app-input-shell h-12 w-full rounded-md border px-3 text-sm cursor-pointer">
                     <SelectValue placeholder="Todos os status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
                     <SelectGroup>
-                      <SelectItem
-                        value="ALL"
-                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                      >
-                        {" "}
-                        Todos os Status{" "}
-                      </SelectItem>
-                      <SelectItem
-                        value="ACTIVE"
-                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                      >
-                        Ativo
-                      </SelectItem>
-                      <SelectItem
-                        value="INACTIVE"
-                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                      >
-                        Inativo
-                      </SelectItem>
-                      <SelectItem
-                        value="OUT_OF_STOCK"
-                        className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                      >
-                        Fora de Estoque
-                      </SelectItem>
+                      {statusFilterOptions.map((option) => (
+                        <SelectItem
+                          key={option.value}
+                          value={option.value}
+                          className={selectItemClassName}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
 
                 <Select
                   value={createdAtFilter}
-                  onValueChange={(e) =>
-                    setCreatedAtFilter(e as CreatedAtFilter)
-                  }
+                  onValueChange={handleCreatedAtFilterChange}
                 >
-                  <SelectTrigger className="h-12 w-full rounded-md border border-gray-300 bg-white px-3 text-sm">
+                  <SelectTrigger className="app-input-shell h-12 w-full rounded-md border px-3 text-sm cursor-pointer">
                     <SelectValue placeholder="Todos os períodos"></SelectValue>
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    <SelectGroup></SelectGroup>
-                    <SelectItem
-                      value="ALL"
-                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                    >
-                      Todos os períodos
-                    </SelectItem>
-                    <SelectItem
-                      value="TODAY"
-                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                    >
-                      Adicionados Hoje
-                    </SelectItem>
-                    <SelectItem
-                      value="LAST_7_DAYS"
-                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                    >
-                      Adicionados a 7 dias
-                    </SelectItem>
-                    <SelectItem
-                      value="LAST_30_DAYS"
-                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                    >
-                      Adicionados a 30 dias
-                    </SelectItem>
-                    <SelectItem
-                      value="LAST_90_DAYS"
-                      className="cursor-pointer hover:bg-gray-200 focus:bg-gray-200 data-[state=checked]:bg-gray-300"
-                    >
-                      Adicionados a 90 dias
-                    </SelectItem>
+                    {createdAtFilterOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className={selectItemClassName}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
