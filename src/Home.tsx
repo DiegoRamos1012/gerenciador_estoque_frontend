@@ -239,6 +239,15 @@ export default function Home({ onLogout }: { onLogout?: () => void }) {
     }
   }, [addProductForm, closeAddDialog]);
 
+  const filteredProducts = useMemo(() => {
+    return getFilteredProducts({
+      products,
+      search: deferredSearch,
+      statusFilter,
+      createdAtFilter,
+    });
+  }, [products, deferredSearch, statusFilter, createdAtFilter]);
+
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
       {
