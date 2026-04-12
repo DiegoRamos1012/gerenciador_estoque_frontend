@@ -213,6 +213,9 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+      <footer className="flex justify-center">
+        EasyStock - Seu Gerenciador de Estoque moderno
+      </footer>
     </div>
   );
 }
